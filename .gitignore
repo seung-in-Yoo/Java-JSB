@@ -35,3 +35,25 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Logs
+*.log
+logs/
+spring.log
+
+# MySQL dump or backup
+*.sql
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Java-specific
+*.class
+
+# application settings
+application-*.yml
+application-*.properties
+
+# Secret Files
+.env
