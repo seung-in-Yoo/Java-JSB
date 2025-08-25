@@ -1,5 +1,16 @@
 package com.ll.jsbwtl.config;
 
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
-public class WebMvcConfig {
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("*");
+    }
 }
