@@ -52,8 +52,7 @@ Thumbs.db
 *.class
 
 # application settings
-application-*.yml
-application-*.properties
+application.yml
 
 # Secret Files
 .env
