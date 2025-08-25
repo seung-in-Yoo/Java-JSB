@@ -9,5 +9,4 @@ public class JsbWtlApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(JsbWtlApplication.class, args);
 	}
-
 }
