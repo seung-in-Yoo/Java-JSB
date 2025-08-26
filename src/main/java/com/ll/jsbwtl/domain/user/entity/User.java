@@ -26,8 +26,4 @@ public class User extends BaseEntity {
     private String email;
 
     private String nickname;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
 }
