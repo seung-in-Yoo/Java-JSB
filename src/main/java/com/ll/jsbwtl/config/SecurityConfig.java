@@ -2,6 +2,7 @@ package com.ll.jsbwtl.config;
 
 import com.ll.jsbwtl.config.jwt.JwtAuthenticationFilter;
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
+import com.ll.jsbwtl.domain.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -41,7 +43,11 @@ public class SecurityConfig {
                         ).permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
-
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+                        .defaultSuccessUrl("/question/list", true) // 여기에 직접 명시
+                )
                 // JWT 인증 필터 등록
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),
