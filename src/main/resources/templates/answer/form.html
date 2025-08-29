@@ -1,0 +1,6 @@
+<h5 th:text="|${lists.size(question.answerList)} 개의 답변이 있습니다.|"></h5>
+<div>
+    <ul>
+        <li th:each="answer : ${question.answerList}" th:text="${answer.content}"></li>
+    </ul>
+</div>
