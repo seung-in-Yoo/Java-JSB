@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "users")
 public class User extends BaseEntity {
     @Id
@@ -30,4 +30,10 @@ public class User extends BaseEntity {
     private String email;
 
     private String nickname;
+
+
+    //소셜로그인
+    private String provider;   // google, kakao, github, naver
+
+    private String providerId; // 소셜 고유ID
 }

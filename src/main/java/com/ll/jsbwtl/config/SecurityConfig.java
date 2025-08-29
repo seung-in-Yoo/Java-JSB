@@ -46,6 +46,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
+                        .defaultSuccessUrl("/question/list", true) // 여기에 직접 명시
                 )
                 // JWT 인증 필터 등록
                 .addFilterBefore(
