@@ -41,26 +41,18 @@ public class UserService {
                 });
     }
     @Transactional
-    public User upsertLocalUser(String email, String password, String nickname) {
-        return userRepository.findByEmail(email)
-                .map(u -> {
-                    if (!Objects.equals(u.getNickname(), nickname)) {
-                        u.setNickname(nickname);
-                    }
-                    if (!Objects.equals(u.getPassword(), password)) {
-                        u.setPassword(password);
-                    }
-                    return u;
-                })
-                .orElseGet(() -> {
-                    User u = new User();
-                    u.setEmail(email);
-                    u.setNickname(nickname);
-                    u.setUsername(generateUsernameFromEmail(email));
-                    u.setPassword(password);  // 암호화x
-                    u.setProvider("local");
-                    return userRepository.save(u);
-                });
+    public User upsertLocalUser(String username, String email, String password, String nickname) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
+
+        User u = new User();
+        u.setUsername(username);
+        u.setEmail(email);
+        u.setNickname(nickname);
+        u.setPassword(password);   // ⚠ 평문, 나중에 암호화 가능
+        u.setProvider("local");
+        return userRepository.save(u);
     }
     private String generateUsername(OAuth2Attrs.Profile p) {
         // 선호 규칙: name 있으면 사용, 없으면 providerId 앞부분
@@ -74,13 +66,10 @@ public class UserService {
         }
         return candidate;
     }
-    private String generateUsernameFromEmail(String email) {
-        String base = email.split("@")[0];
-        String candidate = base;
-        int n = 1;
-        while (userRepository.existsByUsername(candidate)) {
-            candidate = base + "_" + n++;
-        }
-        return candidate;
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }
