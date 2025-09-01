@@ -7,16 +7,17 @@ import com.ll.jsbwtl.global.oauth.OAuth2Attrs;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 // 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
+    private final JwtTokenProvider jwt;
     @Transactional
     public User upsertOAuthUser(String provider, OAuth2Attrs.Profile p) {
         System.out.println("소셜 로그인 사용자 정보: " + p.name);
@@ -42,18 +43,27 @@ public class UserService {
     }
     @Transactional
     public User upsertLocalUser(String username, String email, String password, String nickname) {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-        }
-
         User u = new User();
         u.setUsername(username);
         u.setEmail(email);
         u.setNickname(nickname);
-        u.setPassword(password);   // ⚠ 평문, 나중에 암호화 가능
+        u.setPassword(password);
         u.setProvider("local");
         return userRepository.save(u);
     }
+    public Optional<String> login(String username, String password) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if (user.getPassword().equals(password)) { // ⚠ 평문 체크
+
+                String token = jwt.generateToken(user.getId(), "ROLE_USER");
+                return Optional.of(token);
+            }
+        }
+        return Optional.empty();
+    }
+
     private String generateUsername(OAuth2Attrs.Profile p) {
         // 선호 규칙: name 있으면 사용, 없으면 providerId 앞부분
         String base = (p.name != null && !p.name.isBlank())

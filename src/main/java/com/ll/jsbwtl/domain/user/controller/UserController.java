@@ -1,6 +1,8 @@
 package com.ll.jsbwtl.domain.user.controller;
 
 
+import com.ll.jsbwtl.domain.user.dto.UserLoginRequest;
+import com.ll.jsbwtl.domain.user.dto.UserLoginResponse;
 import com.ll.jsbwtl.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,16 +13,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
 import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
 import java.util.Map;
-
+import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 // 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final JwtTokenProvider jwt;
 
     @GetMapping("/login")
     public String loginPage() {
         return "user/login"; // templates/login.html 로 이동
+    }
+    @PostMapping("/user/login")
+    @ResponseBody
+    public Map<String, String> login(@RequestBody UserLoginRequest req) {
+        return userService.login(req.getUsername(), req.getPassword())
+                .map(token -> Map.of("accessToken", token))
+                .orElse(Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다."));
     }
     @GetMapping("user/register")
     public String registerPage() {
