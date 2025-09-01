@@ -3,6 +3,7 @@ package com.ll.jsbwtl.config;
 import com.ll.jsbwtl.config.jwt.JwtAuthenticationFilter;
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import com.ll.jsbwtl.domain.user.service.CustomOAuth2UserService;
+import com.ll.jsbwtl.domain.user.service.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
@@ -20,6 +22,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -29,6 +32,7 @@ public class SecurityConfig {
     // Spring Security 설정
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 // JWT 사용 시 세션을 사용하지 않기 때문에 STATELESS 설정
                 .csrf(csrf -> csrf.disable())
@@ -46,7 +50,7 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .userInfoEndpoint(u -> u.userService(customOAuth2UserService))
-                        .defaultSuccessUrl("/question/list", true) // 여기에 직접 명시
+                        .successHandler(oAuth2SuccessHandler) // 로그인 성공 시 JWT 발급
                 )
                 // JWT 인증 필터 등록
                 .addFilterBefore(
