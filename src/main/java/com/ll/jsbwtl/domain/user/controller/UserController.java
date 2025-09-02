@@ -1,30 +1,41 @@
 package com.ll.jsbwtl.domain.user.controller;
 
-
+import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import com.ll.jsbwtl.domain.user.dto.UserLoginRequest;
 import com.ll.jsbwtl.domain.user.dto.UserLoginResponse;
+import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
+import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
 import com.ll.jsbwtl.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
-import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
-import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
+
 @Controller
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
     private final JwtTokenProvider jwt;
 
     @GetMapping("/login")
     public String loginPage() {
-        return "user/login"; // templates/login.html 로 이동
+        return "user/login"; // templates/user/login.html 로 이동
     }
+  
+    @GetMapping("/login/success")
+    public String successPage(@RequestParam(required = false) String token, Model model) {
+        
+        if (token == null || token.isBlank()) {
+            return "redirect:/";
+        }
+        // model.addAttribute("accessToken", token);  
+        return "user/login-success"; 
+    }
+
+    
     @PostMapping("/user/login")
     @ResponseBody
     public Map<String, String> login(@RequestBody UserLoginRequest req) {
@@ -32,12 +43,15 @@ public class UserController {
                 .map(token -> Map.of("accessToken", token))
                 .orElse(Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다."));
     }
-    @GetMapping("user/register")
+
+    
+    @GetMapping("/user/register")
     public String registerPage() {
         return "user/register";
     }
 
-    @PostMapping("user/register")
+   
+    @PostMapping("/user/register")
     @ResponseBody
     public UserSignupResponse signup(@RequestBody UserSignupRequest req) {
 
@@ -58,4 +72,3 @@ public class UserController {
         return new UserSignupResponse("회원가입 성공");
     }
 }
-
