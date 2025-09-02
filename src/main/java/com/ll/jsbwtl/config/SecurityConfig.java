@@ -43,7 +43,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/", "/login", "/signup","/login/success",
                                 "/css/**", "/js/**", "/images/**",
-                                "/question/**", "/answer/**", "/user/**"
+                                "/questions/**", "/answer/**", "/user/**"
                         ).permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
