@@ -15,9 +15,11 @@ import java.io.IOException;
 // 유효한 토큰이면 SecurityContext에 인증 정보를 등록
 
 @RequiredArgsConstructor
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtProvider;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest req,

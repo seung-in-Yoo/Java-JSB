@@ -1,8 +1,19 @@
 package com.ll.jsbwtl.domain.question.repository;
 
 import com.ll.jsbwtl.domain.question.entity.Question;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
 public interface QuestionRepository extends JpaRepository<Question, Long> {
+
+    @Query("select q from Question q " +
+            "where (?1 is null or q.categoryName = ?1) " +
+            "and (?2 is null or " +
+            "     lower(q.title)      like lower(concat('%', ?2, '%')) or " +
+            "     lower(q.content)    like lower(concat('%', ?2, '%')) or " +
+            "     lower(q.authorName) like lower(concat('%', ?2, '%')))")
+    Page<Question> search(String categoryName, String kw, Pageable pageable);
+
 }
