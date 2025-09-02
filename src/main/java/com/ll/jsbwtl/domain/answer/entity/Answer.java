@@ -1,10 +1,8 @@
 package com.ll.jsbwtl.domain.answer.entity;
 
+import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +19,13 @@ public class Answer extends BaseEntity {
     private Long id;
 
     private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Question question;
+
+    public Answer(Question question, String content) {
+        this.question = question;
+        this.content = content;
+    }
 }
 
