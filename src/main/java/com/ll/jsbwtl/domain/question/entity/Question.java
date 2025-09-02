@@ -1,24 +1,53 @@
 package com.ll.jsbwtl.domain.question.entity;
 
 import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
-@Entity
+
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name="question")
 public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="title", length=255, nullable=false)
+    private String title;                // 제목
+
+    @Column(columnDefinition = "TEXT", nullable=false)
     private String content;
+
+
+    @Column(name="category_name",length=50, nullable=false)
+    private String categoryName;                // 카테고리
+
+    @Column(name="view_count", nullable=false)
+    private long viewCount = 0L;            // 조회수
+
+    @Column(name="author_username", length=100, nullable=false)
+    private String authorUsername = "anonymous";
+    @Column(name="author_name", length=100, nullable=false)
+    private String authorName = "익명";
+
+    public void increaseViewCount(){ this.viewCount++; }
+
+
+    @Transient private String excerptHtml, contentHtml;
+    @Transient private Integer answerCount;
+    @Transient private Author author;
+
+    public Author getAuthor(){
+        if (author==null) author = new Author(authorName, authorUsername);
+        return author;
+    }
+    public void setAuthor(Author a){ this.author = a; }
+    public static class Author {
+        private final String name, username;
+        public Author(String name,String username){ this.name=name; this.username=username; }
+        public String getName(){ return name; } public String getUsername(){ return username; }
+    }
 }

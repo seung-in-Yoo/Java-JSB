@@ -1,10 +1,144 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>질문 목록</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root{
+            --bg:#fafafa; --card:#fff; --text:#111; --muted:#6b7280; --line:#e5e7eb;
+            --brand:#413D3D; --shadow:0 8px 24px rgba(0,0,0,.06); --radius:14px;
+        }
+        @media (prefers-color-scheme: dark){
+            :root{ --bg:#0b0c0f; --card:#13151a; --text:#e8e9ee; --muted:#9aa0ab; --line:#2a2e37; }
+        }
+
+        *{box-sizing:border-box}
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;
+            margin:0;background:var(--bg);color:var(--text);line-height:1.55}
+        a{color:inherit;text-decoration:none}
+        a:hover{text-decoration:underline}
+        a:visited{color:inherit}
+
+        .container{max-width:980px;margin:auto;padding:24px 18px}
+
+        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;
+            border:1px solid var(--line);background:var(--card)}
+        .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+        .btn:hover{text-decoration:none;transform:translateY(-1px)}
+
+        .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:16px 0}
+        .toolbar form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+        .input, .select{
+            padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text)
+        }
+
+        /* cards */
+        .row{padding:18px;border:1px solid var(--line);border-radius:var(--radius);
+            background:var(--card);box-shadow:var(--shadow);margin-bottom:12px}
+        .row h3{margin:0 0 6px;font-size:19px;letter-spacing:-.2px}
+        .row:hover{transform:translateY(-1px)}
+
+        .meta{font-size:13px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+        .meta > span+span{position:relative;padding-left:12px}
+        .meta > span+span::before{content:"·";position:absolute;left:2px;top:0;color:var(--muted)}
+
+        .content{color:#444}
+        @media (prefers-color-scheme: dark){ .content{color:#c6c8cf} }
+
+        /* pagination */
+        .pagination{display:flex;gap:6px;margin-top:18px;flex-wrap:wrap}
+        .page{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+        .page.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    </style>
+    <script>
+        function mustLogin(msg, to){
+            alert(msg || '로그인 후 이용해 주세요.');
+            if(to){ window.location.href = to; }
+            return false;
+        }
+    </script>
 </head>
 <body>
-<h1>질문 목록 페이지입니다</h1>
+<div class="container">
+
+    <div class="topbar">
+        <h1 style="margin:0;font-size:26px;letter-spacing:-.3px">질문 목록</h1>
+        <a class="btn" th:href="@{/login}">로그인</a>
+    </div>
+
+    <div class="toolbar">
+        <!-- 검색 -->
+        <form th:action="@{/questions}" method="get">
+            <!-- 카테고리 -->
+            <select class="select" name="category" th:value="${param.category}">
+                <option value="" disabled th:selected="${param.category==null or param.category==''}">카테고리 선택</option>
+                <option th:value="'교육·학문'"           th:selected="${param.category=='교육·학문'}">교육·학문</option>
+                <option th:value="'IT/테크'"             th:selected="${param.category=='IT/테크'}">IT/테크</option>
+                <option th:value="'게임'"                th:selected="${param.category=='게임'}">게임</option>
+                <option th:value="'엔터테인먼트·예술'"   th:selected="${param.category=='엔터테인먼트·예술'}">엔터테인먼트·예술</option>
+                <option th:value="'생활'"                th:selected="${param.category=='생활'}">생활</option>
+                <option th:value="'건강'"                th:selected="${param.category=='건강'}">건강</option>
+                <option th:value="'사회·정치'"           th:selected="${param.category=='사회·정치'}">사회·정치</option>
+                <option th:value="'경제'"                th:selected="${param.category=='경제'}">경제</option>
+                <option th:value="'여행'"                th:selected="${param.category=='여행'}">여행</option>
+                <option th:value="'스포츠·레저'"         th:selected="${param.category=='스포츠·레저'}">스포츠·레저</option>
+                <option th:value="'쇼핑'"                th:selected="${param.category=='쇼핑'}">쇼핑</option>
+            </select>
+
+            <input class="input" type="text" name="q" placeholder="검색어" th:value="${param.q}">
+            <select class="select" name="sort" th:value="${param.sort}">
+                <option value="">정렬: 최신순</option>
+                <option value="views"   th:selected="${param.sort=='views'}">조회수순</option>
+                <option value="answers" th:selected="${param.sort=='answers'}">답변많은순</option>
+            </select>
+            <button class="btn" type="submit">검색</button>
+        </form>
+
+        <!-- 새 질문: 로그인 경고 -->
+        <a class="btn primary" th:if="${isLoggedIn}" th:href="@{/questions/new}">새 질문</a>
+        <a class="btn primary" th:if="${!isLoggedIn}" href="#"
+           onclick="return mustLogin('로그인 후 이용해 주세요.', '/login');">새 질문</a>
+    </div>
+
+    <!-- 목록 -->
+    <section th:if="${page!=null and !#lists.isEmpty(page.content)}">
+        <div th:each="q : ${page.content}" class="row">
+            <h3><a th:href="@{|/questions/${q.id}|}" th:text="${q.title}">질문 제목</a></h3>
+            <div class="meta">
+                <span th:text="'카테고리: ' + ${q.categoryName}">카테고리</span>
+                <span th:text="'작성자: ' + ${q.authorName}">작성자</span>
+                <span th:text="${#temporals.format(q.createdAt,'yyyy.MM.dd HH:mm')}">작성일</span>
+                <span th:text="'조회 ' + ${q.viewCount}">조회수</span>
+                <span th:text="'답변 ' + ${q.answerCount}">답변수</span>
+            </div>
+            <div class="content" th:utext="${q.excerptHtml}"></div>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <nav class="pagination">
+            <a class="page" th:if="${page.number>0}"
+               th:href="@{/questions(page=${page.number-1}, size=${page.size},
+                          category=${param.category}, q=${param.q}, sort=${param.sort})}">이전</a>
+
+            <a th:each="i : ${#numbers.sequence(0, page.totalPages-1)}"
+               class="page" th:classappend="${i}==${page.number} ? ' active'"
+               th:text="${i+1}"
+               th:href="@{/questions(page=${i}, size=${page.size},
+                          category=${param.category}, q=${param.q}, sort=${param.sort})}">1</a>
+
+            <a class="page" th:if="${page.number < page.totalPages-1}"
+               th:href="@{/questions(page=${page.number+1}, size=${page.size},
+                          category=${param.category}, q=${param.q}, sort=${param.sort})}">다음</a>
+        </nav>
+    </section>
+
+    <!-- 데이터 없음 -->
+    <section th:if="${page==null or #lists.isEmpty(page.content)}">
+        <div class="row" style="text-align:center">조회할 질문이 없습니다.</div>
+    </section>
+
+</div>
 </body>
 </html>
