@@ -25,6 +25,8 @@
     <a href="/oauth2/authorization/google">Google로 로그인</a>
 </div>
 
+<p>회원이 아니신가요? <a href="/user/register">회원가입</a></p>
+
 <script type="module">
     const form = document.getElementById('loginForm');
     const result = document.getElementById('loginResult');
@@ -37,7 +39,7 @@
 
         try {
             // 로그인 API 요청
-            const response = await fetch('/api/v1/users/login', { // 구현한 컨트롤러 url에 따라 요청보내는 fetch url은 변경해줘야함
+            const response = await fetch('user/login', { // 구현한 컨트롤러 url에 따라 요청보내는 fetch url은 변경해줘야함
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
