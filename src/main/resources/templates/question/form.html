@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko" th:with="editing=${form!=null and form.id!=null}">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${editing} ? '질문 수정' : '질문 작성'">질문 작성</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root{
+            --bg:#fafafa; --card:#fff; --text:#111; --muted:#6b7280; --line:#e5e7eb;
+            --brand:#413D3D; --shadow:0 8px 24px rgba(0,0,0,.06); --radius:14px;
+        }
+        @media (prefers-color-scheme: dark){
+            :root{ --bg:#0b0c0f; --card:#13151a; --text:#e8e9ee; --muted:#9aa0ab; --line:#2a2e37; }
+        }
+
+        *{box-sizing:border-box}
+        body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Apple SD Gothic Neo,Noto Sans KR,sans-serif;
+            margin:0;background:var(--bg);color:var(--text);line-height:1.55}
+        a{color:inherit;text-decoration:none}
+        a:hover{text-decoration:underline}
+        a:visited{color:inherit}
+
+        .container{max-width:880px;margin:auto;padding:24px 18px}
+        .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+            box-shadow:var(--shadow);padding:22px}
+
+        .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:10px;
+            border:1px solid var(--line);background:var(--card)}
+        .btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+        .btn:hover{text-decoration:none;transform:translateY(-1px)}
+
+        .field{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+        label{font-weight:700}
+        input[type=text], select, textarea{
+            padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);
+            outline:none
+        }
+        input:focus, select:focus, textarea:focus{box-shadow:0 0 0 3px rgba(65,61,61,.15)}
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="top">
+        <h1 style="margin:0;font-size:26px" th:text="${editing} ? '질문 수정' : '질문 작성'">질문 작성</h1>
+        <a class="btn" th:href="@{/questions}">목록</a>
+    </div>
+
+    <article class="card">
+        <!-- 생성: POST /questions, 수정: POST + _method=put /questions/{id} -->
+        <form th:action="${editing} ? @{|/questions/${form.id}|} : @{/questions}"
+              method="post" th:object="${form}">
+            <input type="hidden" th:if="${editing}" name="_method" value="put" />
+
+            <div class="field">
+                <label for="title">제목</label>
+                <input id="title" name="title" type="text" th:value="*{title}" placeholder="제목을 입력하세요" required />
+            </div>
+
+            <!-- 카테고리 11개 -->
+            <div class="field">
+                <label for="category">카테고리</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled
+                            th:selected="${form==null or form.category==null or form.category==''}">
+                        카테고리를 선택하세요
+                    </option>
+
+                    <option th:value="'교육·학문'"           th:selected="${form!=null and form.category=='교육·학문'}">교육·학문</option>
+                    <option th:value="'IT/테크'"             th:selected="${form!=null and form.category=='IT/테크'}">IT/테크</option>
+                    <option th:value="'게임'"                th:selected="${form!=null and form.category=='게임'}">게임</option>
+                    <option th:value="'엔터테인먼트·예술'"   th:selected="${form!=null and form.category=='엔터테인먼트·예술'}">엔터테인먼트·예술</option>
+                    <option th:value="'생활'"                th:selected="${form!=null and form.category=='생활'}">생활</option>
+                    <option th:value="'건강'"                th:selected="${form!=null and form.category=='건강'}">건강</option>
+                    <option th:value="'사회·정치'"           th:selected="${form!=null and form.category=='사회·정치'}">사회·정치</option>
+                    <option th:value="'경제'"                th:selected="${form!=null and form.category=='경제'}">경제</option>
+                    <option th:value="'여행'"                th:selected="${form!=null and form.category=='여행'}">여행</option>
+                    <option th:value="'스포츠·레저'"         th:selected="${form!=null and form.category=='스포츠·레저'}">스포츠·레저</option>
+                    <option th:value="'쇼핑'"                th:selected="${form!=null and form.category=='쇼핑'}">쇼핑</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="content">내용</label>
+                <textarea id="content" name="content" rows="12" th:text="*{content}" placeholder="내용을 입력하세요" required></textarea>
+            </div>
+
+            <div style="display:flex;gap:8px">
+                <button class="btn primary" type="submit" th:text="${editing} ? '수정 완료' : '등록'">등록</button>
+                <a class="btn" th:href="@{/questions}">취소</a>
+            </div>
+        </form>
+    </article>
+
+</div>
+</body>
+</html>
