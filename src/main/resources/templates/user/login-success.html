@@ -8,7 +8,6 @@
 <h2>로그인 처리 중입니다...</h2>
 
 <p>로그인 성공! 🎉</p>
-<p>Access Token: <span th:text="${accessToken}"></span></p>
 
 <script th:inline="javascript">
     const token = /*[[${accessToken}]]*/ "";
@@ -17,7 +16,6 @@
         //window.location.href = "/";
     }
 </script>
-
 
 </body>
 </html>
