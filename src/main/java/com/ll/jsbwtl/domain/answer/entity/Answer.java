@@ -1,6 +1,7 @@
 package com.ll.jsbwtl.domain.answer.entity;
 
 import com.ll.jsbwtl.domain.question.entity.Question;
+import com.ll.jsbwtl.domain.user.entity.User;
 import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,7 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
+import java.time.LocalDateTime;
+
+
 @Entity
 @Getter
 @Setter
@@ -23,9 +26,13 @@ public class Answer extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
-    public Answer(Question question, String content) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User author;
+
+    public Answer(Question question, String content, User author) {
         this.question = question;
         this.content = content;
+        this.author = author;
     }
-}
 
+}
