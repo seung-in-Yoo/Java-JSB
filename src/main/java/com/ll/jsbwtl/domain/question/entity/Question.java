@@ -1,9 +1,13 @@
 package com.ll.jsbwtl.domain.question.entity;
 
+import com.ll.jsbwtl.domain.answer.entity.Answer;
 import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -32,6 +36,11 @@ public class Question extends BaseEntity {
     private String authorUsername = "anonymous";
     @Column(name="author_name", length=100, nullable=false)
     private String authorName = "익명";
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("createdAt DESC")  // 최신순으로 정렬
+    private List<Answer> answers = new ArrayList<>();
+
 
     public void increaseViewCount(){ this.viewCount++; }
 

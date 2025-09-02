@@ -11,30 +11,49 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-
 
 @Controller
-@RequestMapping("/answer")
+@RequestMapping("/questions")
 @RequiredArgsConstructor
-public class AnswerContoller {
+public class AnswerController {
     private final QuestionService questionService;
     private final AnswerService answerService;
 
+    //로그인 여부 체크
+    private boolean isLoggedIn(Authentication auth) {
+        return auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
+    }
+
+    //본인 확인
+    private void requireOwner(Authentication auth, Answer answer) {
+        if(!isLoggedIn(auth) || answer.getAuthor() == null
+                || !auth.getName().equals(answer.getAuthor().getUsername())) {
+            throw new IllegalStateException("본인만 접근할 수 있습니다.");
+        }
+    }
+
+
     //Create
-    public String detail(Model model,
+    @PostMapping("{id}/answers")
+    public String createAnswer(Model model,
                          @PathVariable("id") Long id,
                          @RequestParam("content") String content,
-                         Principal principal){
+                         Authentication auth){
+        if (!isLoggedIn(auth)) {
+            return "redirect:/login"; // 로그인 안 되면 로그인 페이지
+        }
+
         Question question = questionService.getById(id);
-        String username = principal.getName(); // 로그인 아이디 가져오기
-        //User author = userService.getByUsername(username); // UserService로 DB에서 User 가져오기
-        //answerService.create(question, content, author);
+        String username = auth.getName(); // 로그인 아이디 가져오기
+
+
+        answerService.create(question, content, username);
 
         return String.format("redirect:/question/detail/%s", id);
     }
@@ -42,17 +61,25 @@ public class AnswerContoller {
 
     //Delete
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id, Principal principal) {
-        String username = principal.getName();
-        Long questionId = answerService.delete(id, username);
+    public String delete(@PathVariable("id") Long id, Authentication auth) {
+        if(!isLoggedIn(auth)) {
+            return "redirect:/login";
+        }
+
+        Answer answer = answerService.getById(id);
+        requireOwner(auth, answer);
+
+        Long questionId = answerService.delete(id, auth.getName());
         return "redirect:/question/detail/%s".formatted(questionId);
     }
 
     //Update - get
-    @GetMapping("/edit/{id}")
-    public String edit(@PathVariable("id") Long id, Principal principal, Model model) {
+    @GetMapping("/update/{id}")
+    public String edit(@PathVariable("id") Long id,
+                       Authentication auth,
+                       Model model) {
         Answer answer = answerService.getById(id);
-        // 권한 체크 필요 (예: principal.getName()과 answer의 작성자 비교)
+        requireOwner(auth, answer);
         model.addAttribute("answer", answer);
         return "answer/modify";
     }
@@ -60,10 +87,11 @@ public class AnswerContoller {
     //Update - post
     @PostMapping("/update/{id}")
     public String update(@PathVariable("id") Long id,
-                         Principal principal,
+                         Authentication auth,
                          @RequestParam("content") String content) {
-        String username = principal.getName();
-        Long questionId = answerService.update(id, content, username);
+        Answer answer = answerService.getById(id);
+        requireOwner(auth, answer);
+        Long questionId = answerService.update(id, content, auth.getName());
         return "redirect:/question/detail/%s".formatted(questionId);
     }
 
@@ -74,23 +102,23 @@ public class AnswerContoller {
     public String list(@PathVariable("questionId") Long questionId,
                        @RequestParam(value = "sort", defaultValue = "desc") String sortOrder,
                        Model model,
-                       @PageableDefault(size = 5, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable){
+                       @PageableDefault(size = 5, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Question question = questionService.getById(questionId);
 
         Sort sort = Sort.by("createDate");
-        if("asc".equals(sortOrder)) {
-            sort = sort.ascending();
-        } else {
-            sort = sort.descending();
-        }
+        sort = "asc".equals(sortOrder) ? sort.ascending() : sort.descending();
 
         Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         Page<Answer> paging = answerService.getList(question, sortedPageable);
+
         model.addAttribute("question", question);
         model.addAttribute("paging", paging);
         model.addAttribute("sortOrder", sortOrder);
         return "answer/list";
     }
+
+
+
 
 }
