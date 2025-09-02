@@ -30,8 +30,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Long localUserId = ((Number) oAuth2User.getAttribute("localUserId")).longValue();
         String role = oAuth2User.getAuthorities().iterator().next().getAuthority();
 
+
         // JWT 발급
         String accessToken = jwtTokenProvider.generateToken(localUserId, role);
+
+        //System.out.println("accessToken : " + accessToken);
 
         response.sendRedirect("/login/success?token=" + accessToken);
     }
