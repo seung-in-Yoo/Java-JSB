@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
@@ -20,9 +21,9 @@ public class UserController {
     }
 
     @GetMapping("/login/success")
-    public String successPage(HttpServletRequest request, Model model) {
-        String accessToken = (String) request.getSession().getAttribute("accessToken");
-        model.addAttribute("accessToken", accessToken);
+    public String successPage(@RequestParam String token, Model model) {
+        model.addAttribute("accessToken", token);
         return "user/login-success"; // user/login-success.html
     }
+
 }
