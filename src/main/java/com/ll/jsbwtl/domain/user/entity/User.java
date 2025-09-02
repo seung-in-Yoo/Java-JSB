@@ -13,8 +13,13 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "users")
+@NoArgsConstructor
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"provider", "providerId"})
+        }
+)
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +35,10 @@ public class User extends BaseEntity {
     private String email;
 
     private String nickname;
+
+
+    //소셜로그인
+    private String provider;   // google, kakao, github, naver
+
+    private String providerId; // 소셜 고유ID
 }
