@@ -41,7 +41,7 @@ public class SecurityConfig {
                 // 요청 URL 별로 인증/인가 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/login", "/signup",
+                                "/", "/login", "/signup","/login/success",
                                 "/css/**", "/js/**", "/images/**",
                                 "/question/**", "/answer/**", "/user/**"
                         ).permitAll()
