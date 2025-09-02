@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.HtmlUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -31,8 +30,8 @@ public class QuestionService {
     public Page<Question> list(String category, String kw, int page, int size, String sort) {
         Sort s = switch (sort == null ? "" : sort.toLowerCase()) {
             case "views"   -> Sort.by(Sort.Direction.DESC, "viewCount");
-            case "answers" -> Sort.by(Sort.Direction.DESC, "createDate"); // 답변 기능 없을 때는 최신순으로
-            default        -> Sort.by(Sort.Direction.DESC, "createDate");
+            case "answers" -> Sort.by(Sort.Direction.DESC, "createdAt"); // 답변 기능 없을 때는 최신순으로
+            default        -> Sort.by(Sort.Direction.DESC, "createdAt");
         };
 
         Page<Question> p = repo.search(blankToNull(category), blankToNull(kw),
@@ -82,7 +81,6 @@ public class QuestionService {
         q.setTitle(title.trim());
         q.setContent(content.trim());
         q.setCategoryName(requireCategory(category));
-        q.setCreateDate(LocalDateTime.now());
         q.setAuthorUsername(defaultIfBlank(authorUsername, "anonymous"));
         q.setAuthorName(defaultIfBlank(authorName, "익명"));
         return repo.save(q);
