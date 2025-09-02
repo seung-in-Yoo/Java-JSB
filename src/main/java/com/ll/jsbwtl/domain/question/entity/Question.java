@@ -1,17 +1,16 @@
 package com.ll.jsbwtl.domain.question.entity;
 
+import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 
 @Getter
 @Setter
 @Entity
 @Table(name="question")
-public class Question {
+public class Question extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,8 +21,6 @@ public class Question {
     @Column(columnDefinition = "TEXT", nullable=false)
     private String content;
 
-    @Column(name="created_at")
-    private LocalDateTime createDate;
 
     @Column(name="category_name",length=50, nullable=false)
     private String categoryName;                // 카테고리
@@ -38,9 +35,6 @@ public class Question {
 
     public void increaseViewCount(){ this.viewCount++; }
 
-    @Transient public String getTitle(){ return title; }
-    @Transient public String getCategoryName(){ return categoryName; }
-    @Transient public LocalDateTime getCreatedAt(){ return createDate; }
 
     @Transient private String excerptHtml, contentHtml;
     @Transient private Integer answerCount;
