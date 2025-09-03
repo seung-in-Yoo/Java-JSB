@@ -111,7 +111,9 @@
                 <span th:text="${a.author.nickname}">작성자</span>
                 <span th:text="${#temporals.format(a.createdAt,'yyyy.MM.dd HH:mm')}">날짜</span>
             </div>
-            <div class="content" th:utext="${a.contentHtml}">답변 내용</div>
+            <a th:href="@{|/questions/update/${a.id}|}" style="text-decoration: none; color: inherit;">
+                <div class="content" th:utext="${a.contentHtml}">답변 내용</div>
+            </a>
         </div>
     </section>
 
