@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>마이페이지</title></head>
+<body>
+<h1>마이페이지</h1>
+<p>아이디: <span th:text="${user.username}"></span></p>
+<p>이메일: <span th:text="${user.email}"></span></p>
+<p>닉네임: <span th:text="${user.nickname}"></span></p>
+
+<a th:href="@{/mypage/edit}">수정하기</a>
+</body>
+</html>

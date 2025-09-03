@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 "/css/**", "/js/**", "/images/**",
                                 "/questions/**", "/answer/**", "/user/**"
                         ).permitAll()
+                        .requestMatchers("/mypage/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2

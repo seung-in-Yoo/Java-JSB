@@ -50,25 +50,20 @@ public class UserService {
         return userRepository.save(u);
     }
     public Optional<String> login(String username, String password) {
-        System.out.println("🔑 로그인 시도 - ID: " + username + ", PW: " + password);
 
         Optional<User> userOpt = userRepository.findByUsername(username);
 
         if (userOpt.isEmpty()) {
-            System.out.println("❌ 사용자 없음: " + username);
             return Optional.empty();
         }
 
         User user = userOpt.get();
-        System.out.println("✅ 사용자 찾음: " + user.getUsername());
 
         if (!user.getPassword().equals(password)) {
-            System.out.println("❌ 비밀번호 불일치. DB에 저장된 비번: " + user.getPassword());
             return Optional.empty();
         }
 
         String token = jwt.generateToken(user.getId(), "ROLE_USER");
-        System.out.println("✅ 로그인 성공 - 토큰 발급됨: " + token);
 
         return Optional.of(token);
     }
@@ -91,4 +86,20 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public void updateProfile(String username, String nickname, String email) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+
+        user.setNickname(nickname);
+        user.setEmail(email);
+
+    }
+
 }
