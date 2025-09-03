@@ -94,9 +94,12 @@ public class UserService {
 
     @Transactional
     public void updateProfile(String username, String nickname, String email) {
-        User user = findByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+
         user.setNickname(nickname);
         user.setEmail(email);
+
     }
 
 }

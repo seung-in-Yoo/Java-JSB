@@ -87,7 +87,7 @@ public class UserController {
         return new UserSignupResponse("회원가입 성공");
     }
 
-    @GetMapping("/user/me")
+    @GetMapping("/mypage")
     public String myPage(Authentication auth, Model model) {
         if (auth == null || !auth.isAuthenticated()) {
             return "redirect:/login";
@@ -99,24 +99,30 @@ public class UserController {
         return "user/mypage";
     }
 
-    // 수정 폼
-    @GetMapping("/user/me/edit")
+    @GetMapping("/mypage/edit")
     public String editPage(Authentication auth, Model model) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
         String username = auth.getName();
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
         return "user/edit";
     }
 
-    // 수정 처리
-    @PostMapping("/user/me/edit")
+    @PostMapping("/mypage/edit")
     public String editSubmit(
             Authentication auth,
             @RequestParam String nickname,
             @RequestParam String email
     ) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
         String username = auth.getName();
         userService.updateProfile(username, nickname, email);
-        return "redirect:/user/me";
+        return "redirect:/mypage";
     }
 }
