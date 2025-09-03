@@ -24,18 +24,19 @@ public class UserController {
     public String loginPage() {
         return "user/login"; // templates/user/login.html 로 이동
     }
-  
+
+    // 로그인 성공 후 페이지
     @GetMapping("/login/success")
     public String successPage(@RequestParam(required = false) String token, Model model) {
         
         if (token == null || token.isBlank()) {
             return "redirect:/";
         }
-        // model.addAttribute("accessToken", token);
-        return "user/login-success"; 
+        // token은 사용자가 보기보다는 쿠키나 localStorage로 처리해야 안전함
+        return "user/login-success";
     }
 
-    
+    // 로그인 처리 (JSON)
     @PostMapping("/user/login")
     @ResponseBody
     public Map<String, String> login(@RequestBody UserLoginRequest req) {
@@ -50,7 +51,7 @@ public class UserController {
         return "user/register";
     }
 
-   
+    // 회원가입 처리 (JSON)
     @PostMapping("/user/register")
     @ResponseBody
     public UserSignupResponse signup(@RequestBody UserSignupRequest req) {
