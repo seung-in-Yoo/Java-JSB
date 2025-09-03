@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
 @Entity
 @Getter
 @Setter
@@ -20,6 +18,7 @@ import lombok.Setter;
         }
 )
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,8 +29,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-
-    //소셜로그인
+    // 소셜로그인
     private String provider;   // google, kakao, github, naver
 
     private String providerId; // 소셜 고유ID
@@ -41,5 +39,4 @@ public class User extends BaseEntity {
 
     @Column(nullable = true)
     private String nickname;
-
 }

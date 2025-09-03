@@ -87,7 +87,7 @@
 
         <div class="divider"></div>
 
-        <!-- 작성자일 때만 보이는 영역 -->
+        
         <div th:if="${isQuestionAuthor}" style="display:flex; gap:8px;">
             <a class="btn" th:href="@{|/questions/${question.id}/edit|}">수정</a>
 
@@ -102,9 +102,38 @@
         </div>
     </article>
 
+    
+    <section class="section">
+        <h2 th:text="|답변 ${#lists.size(answers)}|">답변 0</h2>
+
+        <div th:each="a : ${answers}" class="ans">
+            <div class="meta">
+                <span th:text="${a.authorName}">작성자</span>
+                <span th:text="${#temporals.format(a.createdAt,'yyyy.MM.dd HH:mm')}">날짜</span>
+            </div>
+            <div class="content" th:utext="${a.contentHtml}">답변 내용</div>
+        </div>
+    </section>
+
+  
+    <section class="section card editor" th:if="${isLoggedIn}" style="padding:18px;">
+        <h3>답변 작성</h3>
+        <form th:action="@{|/questions/${question.id}/answers|}" method="post">
+            <textarea name="content" rows="8" placeholder="답변 내용을 입력하세요"></textarea>
+            <div style="margin-top:12px;display:flex;gap:8px;">
+                <button class="btn primary" type="submit">등록</button>
+            </div>
+        </form>
+    </section>
+
+    
+    <section class="section" th:if="${!isLoggedIn}">
+        <a class="btn" th:href="@{/login}">로그인 후 답변을 작성할 수 있어요</a>
+    </section>
+
+    <!-- fragment 적용 시 사용할 부분
     <div th:replace="answer/list_fragment :: answerList (~{answers=${answers}}, ~{isLoggedIn=${isLoggedIn}})"></div>
-
-
+    -->
 
 </div>
 </body>

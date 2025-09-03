@@ -1,5 +1,6 @@
 package com.ll.jsbwtl.domain.question.controller;
 
+
 import com.ll.jsbwtl.domain.answer.entity.Answer;
 import com.ll.jsbwtl.domain.question.dto.QuestionForm;
 import com.ll.jsbwtl.domain.question.entity.Question;
@@ -12,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +46,10 @@ public class QuestionController {
     public String detail(@PathVariable Long id, Authentication auth, Model model) {
         Question q = service.getDetailAndIncrease(id);
         model.addAttribute("question", q);
+       
         List<Answer> answers = q.getAnswers() != null ? q.getAnswers() : new ArrayList<>();
-        model.addAttribute("answers", answers); // answers가 null이 아니도록 항상 리스트로 전달
+        model.addAttribute("answers", answers);
+
         boolean owner = isLoggedIn(auth) && Objects.equals(auth.getName(), q.getAuthor().getUsername());
         model.addAttribute("isLoggedIn", isLoggedIn(auth));
         model.addAttribute("isQuestionAuthor", owner);
