@@ -14,7 +14,7 @@ import lombok.Setter;
 @Table(
         name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"provider", "providerId"})
+                @UniqueConstraint(columnNames = {"email", "provider"})
         }
 )
 public class User extends BaseEntity {
@@ -29,14 +29,14 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    // 소셜로그인
-    private String provider;   // google, kakao, github, naver
+    @Column(nullable = false)
+    private String provider;   
 
     private String providerId; // 소셜 고유ID
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = true)
+    @Column
     private String nickname;
 }

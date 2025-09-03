@@ -2,6 +2,7 @@ package com.ll.jsbwtl.domain.user.repository;
 
 import com.ll.jsbwtl.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.config.annotation.web.PortMapperDsl;
 
 import java.util.Optional;
 
@@ -10,10 +11,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     //소셜 로그인
-    Optional<User> findByProviderAndProviderId(String provider, String providerId);
     boolean existsByUsername(String username);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
     boolean existsByEmail(String email);
-
+    Optional<User> findByEmailAndProvider(String email, String provider);
 }

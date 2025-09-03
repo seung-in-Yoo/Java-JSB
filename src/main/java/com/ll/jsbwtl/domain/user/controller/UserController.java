@@ -32,6 +32,9 @@ public class UserController {
         if (token == null || token.isBlank()) {
             return "redirect:/";
         }
+
+        // model.addAttribute("accessToken", token);
+
         return "user/login-success";
     }
 

@@ -21,21 +21,17 @@ public final class OAuth2Attrs {
                 return new Profile((String) attrs.get("sub"),
                         (String) attrs.get("email"),
                         (String) attrs.get("name"));
-//            case "github":
-//                return new Profile(String.valueOf(attrs.get("id")),
-//                        (String) attrs.get("email"),
-//                        (String) attrs.get("name"));
-//            case "kakao": {
-//                String id = String.valueOf(attrs.get("id"));
-//                Map<String,Object> acc = (Map<String,Object>) attrs.get("kakao_account");
-//                String email = acc != null ? (String) acc.get("email") : null;
-//                String name = null;
-//                if (acc != null) {
-//                    Map<String,Object> prof = (Map<String,Object>) acc.get("profile");
-//                    if (prof != null) name = (String) prof.get("nickname");
-//                }
-//                return new Profile(id, email, name);
-//            }
+            case "kakao": {
+                String id = String.valueOf(attrs.get("id"));
+                Map<String,Object> acc = (Map<String,Object>) attrs.get("kakao_account");
+                String email = acc != null ? (String) acc.get("email") : null;
+                String name = null;
+                if (acc != null) {
+                    Map<String,Object> prof = (Map<String,Object>) acc.get("profile");
+                    if (prof != null) name = (String) prof.get("nickname");
+                }
+                return new Profile(id, email, name);
+            }
 //            case "naver": {
 //                Map<String,Object> r = (Map<String,Object>) attrs.get("response");
 //                return new Profile((String) r.get("id"),
