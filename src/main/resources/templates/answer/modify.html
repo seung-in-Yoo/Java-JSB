@@ -15,7 +15,7 @@
 
 <h1>답변 수정</h1>
 
-<form th:action="@{|/answer/update/${answer.id}|}" method="post">
+<form th:action="@{|/questions/update/${answer.id}|}" method="post">
     <textarea name="content" rows="8" th:text="${answer.content}"></textarea>
     <div>
         <button type="submit">수정 완료</button>

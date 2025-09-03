@@ -91,7 +91,7 @@ public class AnswerController {
         Answer answer = answerService.getById(id);
         requireOwner(auth, answer);
         Long questionId = answerService.update(id, content, auth.getName());
-        return "redirect:/question/detail/%s".formatted(questionId);
+        return "redirect:/questions/%s".formatted(questionId);
     }
 
 

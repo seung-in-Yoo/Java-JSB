@@ -5,6 +5,7 @@ import com.ll.jsbwtl.domain.answer.repository.AnswerRepository;
 import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.domain.user.entity.User;
 import com.ll.jsbwtl.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,6 +41,7 @@ public class AnswerService {
         return answer.getQuestion().getId();
     }
 
+    @Transactional
     public Long update(Long id, String content, String username) {
         Answer answer = getById(id);
         requireOwner(answer, username);
