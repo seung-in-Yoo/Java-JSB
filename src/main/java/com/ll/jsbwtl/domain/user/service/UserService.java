@@ -20,9 +20,7 @@ public class UserService {
     private final JwtTokenProvider jwt;
     @Transactional
     public User upsertOAuthUser(String provider, OAuth2Attrs.Profile p) {
-        System.out.println("소셜 로그인 사용자 정보: " + p.name);
-
-        return userRepository.findByProviderAndProviderId(provider, p.providerId)
+        return userRepository.findByEmailAndProvider(p.email, provider)
                 .map(u -> {
                     // 필요 시 동기화(이름/이메일 갱신 등)
                     if (p.email != null && !Objects.equals(u.getEmail(), p.email)) u.setEmail(p.email);

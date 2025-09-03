@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(
         name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"provider", "providerId"})
+                @UniqueConstraint(columnNames = {"email", "provider"})
         }
 )
 public class User extends BaseEntity {
@@ -31,14 +31,14 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     private String nickname;
 
-
     //소셜로그인
-    private String provider;   // google, kakao, github, naver
+    @Column(nullable = false)
+    private String provider;   // local, google, kakao, github, naver
 
     private String providerId; // 소셜 고유ID
 }

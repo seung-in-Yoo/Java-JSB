@@ -1,6 +1,5 @@
 package com.ll.jsbwtl.domain.user.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,9 +11,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -33,8 +29,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // JWT 발급
         String accessToken = jwtTokenProvider.generateToken(localUserId, role);
-
-        //System.out.println("accessToken : " + accessToken);
 
         response.sendRedirect("/login/success?token=" + accessToken);
     }
