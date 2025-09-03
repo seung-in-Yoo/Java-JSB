@@ -1,5 +1,7 @@
 package com.ll.jsbwtl.domain.question.controller;
 
+
+
 import com.ll.jsbwtl.domain.question.dto.QuestionForm;
 import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.domain.question.service.QuestionService;
@@ -11,8 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -24,11 +24,12 @@ public class QuestionController {
 
     // 목록
     @GetMapping
-    public String list(@RequestParam(defaultValue="0") int page,
-                       @RequestParam(defaultValue="10") int size,
-                       @RequestParam(required=false) String category,
-                       @RequestParam(name="q", required=false) String kw,
-                       @RequestParam(required=false, defaultValue="") String sort,
+    public String list(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "category", required = false) String category,
+            @RequestParam(name = "q", required = false) String kw,
+            @RequestParam(name = "sort", required = false, defaultValue = "") String sort,
                        Authentication auth, Model model) {
 
         Page<Question> p = service.list(category, kw, page, size, sort);
@@ -40,9 +41,11 @@ public class QuestionController {
     // 상세(+조회수)
     @GetMapping("/{id}")
     public String detail(@PathVariable Long id, Authentication auth, Model model) {
-        Question q = service.getDetailAndIncrease(id);
+        Question q = service.getDetailAndIncreaseWithAnswers(id);
+
         model.addAttribute("question", q);
-        model.addAttribute("answers", List.of()); // Answer 팀 구현 전 임시
+        model.addAttribute("answers", q.getAnswers());
+
         boolean owner = isLoggedIn(auth) && Objects.equals(auth.getName(), q.getAuthor().getUsername());
         model.addAttribute("isLoggedIn", isLoggedIn(auth));
         model.addAttribute("isQuestionAuthor", owner);

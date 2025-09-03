@@ -50,16 +50,27 @@ public class UserService {
         return userRepository.save(u);
     }
     public Optional<String> login(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (user.getPassword().equals(password)) { // ⚠ 평문 체크
+        System.out.println("🔑 로그인 시도 - ID: " + username + ", PW: " + password);
 
-                String token = jwt.generateToken(user.getId(), "ROLE_USER");
-                return Optional.of(token);
-            }
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isEmpty()) {
+            System.out.println("❌ 사용자 없음: " + username);
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        User user = userOpt.get();
+        System.out.println("✅ 사용자 찾음: " + user.getUsername());
+
+        if (!user.getPassword().equals(password)) {
+            System.out.println("❌ 비밀번호 불일치. DB에 저장된 비번: " + user.getPassword());
+            return Optional.empty();
+        }
+
+        String token = jwt.generateToken(user.getId(), "ROLE_USER");
+        System.out.println("✅ 로그인 성공 - 토큰 발급됨: " + token);
+
+        return Optional.of(token);
     }
 
     private String generateUsername(OAuth2Attrs.Profile p) {

@@ -8,13 +8,11 @@ import java.util.List;
 // JWT 인증 객체를 표현하는 클래스 (인증된 사용자의 정보를 나타냄)
 public class JwtAuthentication extends AbstractAuthenticationToken {
 
-    // JWT에서 추출한 사용자 ID
-    private final Long userId;
+    private final String username;
 
-    public JwtAuthentication(Long userId) {
+    public JwtAuthentication(String username) {
         super(List.of(new SimpleGrantedAuthority("ROLE_USER")));
-        this.userId = userId;
-        // 인증 완료 상태로 설정
+        this.username = username;
         setAuthenticated(true);
     }
 
@@ -23,13 +21,13 @@ public class JwtAuthentication extends AbstractAuthenticationToken {
         return "";
     }
 
-    // 사용자 고유 ID 반환
     @Override
     public Object getPrincipal() {
-        return userId;
+        return username;
     }
 
-    public Long getUserId() {
-        return userId;
+    @Override
+    public String getName() {
+        return username;
     }
 }
