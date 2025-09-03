@@ -4,10 +4,12 @@ import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import com.ll.jsbwtl.domain.user.dto.UserLoginRequest;
 import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
 import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
+import com.ll.jsbwtl.domain.user.entity.User;
 import com.ll.jsbwtl.domain.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -83,5 +85,38 @@ public class UserController {
         );
 
         return new UserSignupResponse("회원가입 성공");
+    }
+
+    @GetMapping("/user/me")
+    public String myPage(Authentication auth, Model model) {
+        if (auth == null || !auth.isAuthenticated()) {
+            return "redirect:/login";
+        }
+
+        String username = auth.getName();
+        User user = userService.findByUsername(username);
+        model.addAttribute("user", user);
+        return "user/mypage";
+    }
+
+    // 수정 폼
+    @GetMapping("/user/me/edit")
+    public String editPage(Authentication auth, Model model) {
+        String username = auth.getName();
+        User user = userService.findByUsername(username);
+        model.addAttribute("user", user);
+        return "user/edit";
+    }
+
+    // 수정 처리
+    @PostMapping("/user/me/edit")
+    public String editSubmit(
+            Authentication auth,
+            @RequestParam String nickname,
+            @RequestParam String email
+    ) {
+        String username = auth.getName();
+        userService.updateProfile(username, nickname, email);
+        return "redirect:/user/me";
     }
 }
