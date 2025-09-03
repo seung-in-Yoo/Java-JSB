@@ -65,7 +65,12 @@
 
     <div class="topbar">
         <h1 style="margin:0;font-size:26px;letter-spacing:-.3px">질문 목록</h1>
-        <a class="btn" th:href="@{/login}">로그인</a>
+
+        <div style="display: flex; gap: 10px">
+            <a class="btn" th:if="${isLoggedIn}" th:href="@{/mypage}">마이페이지</a>
+            <a class="btn" th:if="${isLoggedIn}" th:href="@{/logout}">로그아웃</a>
+            <a class="btn" th:unless="${isLoggedIn}" th:href="@{/login}">로그인</a>
+        </div>
     </div>
 
     <div class="toolbar">
