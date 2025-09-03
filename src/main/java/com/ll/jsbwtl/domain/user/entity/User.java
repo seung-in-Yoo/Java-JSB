@@ -34,7 +34,7 @@ public class User extends BaseEntity {
 
     private String providerId; // 소셜 고유ID
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true)
     private String email;
 
     @Column
