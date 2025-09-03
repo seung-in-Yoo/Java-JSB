@@ -118,19 +118,23 @@
 
         <!-- 페이지네이션 -->
         <nav class="pagination">
-            <a class="page" th:if="${page.number>0}"
-               th:href="@{/questions(page=${page.number-1}, size=${page.size},
-                          category=${param.category}, q=${param.q}, sort=${param.sort})}">이전</a>
+            <a class="page" th:if="${page.number > 0}"
+               th:href="@{/questions(page=${page.number - 1}, size=${page.size}, category=${param.category}, q=${param.q}, sort=${param.sort})}">
+                이전
+            </a>
 
-            <a th:each="i : ${#numbers.sequence(0, page.totalPages-1)}"
-               class="page" th:classappend="${i}==${page.number} ? ' active'"
-               th:text="${i+1}"
-               th:href="@{/questions(page=${i}, size=${page.size},
-                          category=${param.category}, q=${param.q}, sort=${param.sort})}">1</a>
+            <a th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+               class="page"
+               th:classappend="${i == page.number} ? ' active' : ''"
+               th:text="${i + 1}"
+               th:href="@{/questions(page=${i}, size=${page.size}, category=${param.category}, q=${param.q}, sort=${param.sort})}">
+                1
+            </a>
 
-            <a class="page" th:if="${page.number < page.totalPages-1}"
-               th:href="@{/questions(page=${page.number+1}, size=${page.size},
-                          category=${param.category}, q=${param.q}, sort=${param.sort})}">다음</a>
+            <a class="page" th:if="${page.number < page.totalPages - 1}"
+               th:href="@{/questions(page=${page.number + 1}, size=${page.size}, category=${param.category}, q=${param.q}, sort=${param.sort})}">
+                다음
+            </a>
         </nav>
     </section>
 
