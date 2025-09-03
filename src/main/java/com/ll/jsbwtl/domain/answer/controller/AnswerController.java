@@ -42,20 +42,19 @@ public class AnswerController {
     //Create
     @PostMapping("{id}/answers")
     public String createAnswer(Model model,
-                         @PathVariable("id") Long id,
-                         @RequestParam("content") String content,
-                         Authentication auth){
+                               @PathVariable("id") Long id,
+                               @RequestParam("content") String content,
+                               Authentication auth){
         if (!isLoggedIn(auth)) {
-            return "redirect:/login"; // 로그인 안 되면 로그인 페이지
+            return "redirect:/login"; // 로그인 안 된 경우 로그인 페이지
         }
 
         Question question = questionService.getById(id);
-        String username = auth.getName(); // 로그인 아이디 가져오기
-
+        String username = auth.getName();
 
         answerService.create(question, content, username);
 
-        return String.format("redirect:/question/detail/%s", id);
+        return String.format("redirect:/questions/%s", id);
     }
 
 
@@ -117,8 +116,4 @@ public class AnswerController {
         model.addAttribute("sortOrder", sortOrder);
         return "answer/list";
     }
-
-
-
-
 }
