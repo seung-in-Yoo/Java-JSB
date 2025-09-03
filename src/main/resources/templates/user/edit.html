@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>프로필 수정</title></head>
+<body>
+<h1>프로필 수정</h1>
+<form method="post" th:action="@{/user/me/edit}">
+    <label>이메일: <input type="email" name="email" th:value="${user.email}" required></label><br>
+    <label>닉네임: <input type="text" name="nickname" th:value="${user.nickname}" required></label><br>
+    <button type="submit">저장</button>
+</form>
+</body>
+</html>
