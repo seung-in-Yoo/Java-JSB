@@ -25,6 +25,7 @@ public class AnswerService {
     }
 
     public void create(Question question, String content, String username) {
+        System.out.println("username: " + username); // 계속 에러 떠서 로그 찍어봄
         User author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("작성자를 찾을 수 없습니다."));
         Answer answer = new Answer(question, content, author);

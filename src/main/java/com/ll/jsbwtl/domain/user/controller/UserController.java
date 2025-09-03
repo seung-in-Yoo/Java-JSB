@@ -2,15 +2,15 @@ package com.ll.jsbwtl.domain.user.controller;
 
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import com.ll.jsbwtl.domain.user.dto.UserLoginRequest;
-import com.ll.jsbwtl.domain.user.dto.UserLoginResponse;
 import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
 import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
 import com.ll.jsbwtl.domain.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 @Controller
@@ -28,21 +28,31 @@ public class UserController {
 
     // 로그인 성공 후 페이지
     @GetMapping("/login/success")
-    public String successPage(@RequestParam(required = false) String token, Model model) {
+    public String successPage(@RequestParam(name = "token", required = false) String token, Model model) {
         if (token == null || token.isBlank()) {
             return "redirect:/";
         }
-        // token은 사용자가 보기보다는 쿠키나 localStorage로 처리해야 안전함
         return "user/login-success";
     }
 
     // 로그인 처리 (JSON)
     @PostMapping("/user/login")
     @ResponseBody
-    public Map<String, String> login(@RequestBody UserLoginRequest req) {
+    public Map<String, String> login(@RequestBody UserLoginRequest req, HttpServletResponse response) {
         return userService.login(req.getUsername(), req.getPassword())
-                .map(token -> Map.of("accessToken", token))
-                .orElse(Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다."));
+                .map(token -> {
+                    Cookie cookie = new Cookie("Authorization", token);
+                    cookie.setHttpOnly(true);
+                    cookie.setPath("/");
+                    cookie.setMaxAge(60 * 60);
+                    response.addCookie(cookie);
+
+                    return Map.of("accessToken", token); // JSON 응답 포함
+                })
+                .orElseGet(() -> {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다.");
+                });
     }
 
     // 회원가입 폼 페이지
