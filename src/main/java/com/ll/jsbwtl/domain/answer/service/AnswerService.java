@@ -5,6 +5,7 @@ import com.ll.jsbwtl.domain.answer.repository.AnswerRepository;
 import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.domain.user.entity.User;
 import com.ll.jsbwtl.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class AnswerService {
     }
 
     public void create(Question question, String content, String username) {
+        System.out.println("username: " + username); // 계속 에러 떠서 로그 찍어봄
         User author = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("작성자를 찾을 수 없습니다."));
         Answer answer = new Answer(question, content, author);
@@ -39,6 +41,7 @@ public class AnswerService {
         return answer.getQuestion().getId();
     }
 
+    @Transactional
     public Long update(Long id, String content, String username) {
         Answer answer = getById(id);
         requireOwner(answer, username);

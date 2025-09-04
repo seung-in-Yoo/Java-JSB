@@ -50,16 +50,22 @@ public class UserService {
         return userRepository.save(u);
     }
     public Optional<String> login(String username, String password) {
-        Optional<User> userOpt = userRepository.findByUsername(username);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (user.getPassword().equals(password)) { // ⚠ 평문 체크
 
-                String token = jwt.generateToken(user.getId(), "ROLE_USER");
-                return Optional.of(token);
-            }
+        Optional<User> userOpt = userRepository.findByUsername(username);
+
+        if (userOpt.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        User user = userOpt.get();
+
+        if (!user.getPassword().equals(password)) {
+            return Optional.empty();
+        }
+
+        String token = jwt.generateToken(user.getId(), "ROLE_USER");
+
+        return Optional.of(token);
     }
 
     private String generateUsername(OAuth2Attrs.Profile p) {
@@ -80,4 +86,20 @@ public class UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public void updateProfile(String username, String nickname, String email) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자 없음"));
+
+        user.setNickname(nickname);
+        user.setEmail(email);
+
+    }
+
 }

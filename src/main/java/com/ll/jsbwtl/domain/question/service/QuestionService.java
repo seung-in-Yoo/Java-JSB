@@ -1,5 +1,6 @@
 package com.ll.jsbwtl.domain.question.service;
 
+import com.ll.jsbwtl.domain.answer.entity.Answer;
 import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.domain.question.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,24 @@ public class QuestionService {
         q.setAuthor(new Question.Author(q.getAuthorName(), q.getAuthorUsername()));
         return q;
     }
+
+    @Transactional
+    public Question getDetailAndIncreaseWithAnswers(Long id) {
+        Question q = repo.findWithAnswersById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 질문을 찾을 수 없습니다. ID: " + id));
+
+        q.increaseViewCount();
+
+        q.setContentHtml(toContentHtml(q.getContent()));
+        q.setAuthor(new Question.Author(q.getAuthorName(), q.getAuthorUsername()));
+
+        for (Answer a : q.getAnswers()) {
+            a.setAuthorInfo(a.getAuthorInfo());
+        }
+
+        return q;
+    }
+
 
     // 수정 폼 등에서 조회(조회수 증가 없음)
     public Question getById(Long id) {

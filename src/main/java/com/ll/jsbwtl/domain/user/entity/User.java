@@ -7,13 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(
         name = "users",
         uniqueConstraints = {
@@ -21,6 +18,7 @@ import java.time.LocalDateTime;
         }
 )
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,13 +30,13 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private String email;
-
-    private String nickname;
-
-    //소셜로그인
-    @Column(nullable = false)
-    private String provider;   // local, google, kakao, github, naver
+    private String provider;
 
     private String providerId; // 소셜 고유ID
+
+    @Column(nullable = true)
+    private String email;
+
+    @Column
+    private String nickname;
 }

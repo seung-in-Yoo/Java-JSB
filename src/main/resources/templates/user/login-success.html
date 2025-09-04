@@ -9,11 +9,13 @@
 
 <p>로그인 성공! 🎉</p>
 
+<a href="/questions">질문 목록으로 이동</a>
+
 <script th:inline="javascript">
     const token = /*[[${accessToken}]]*/ "";
     if (token) {
         localStorage.setItem("accessToken", token);
-        //window.location.href = "/";
+        // window.location.href = "/questions";
     }
 </script>
 
