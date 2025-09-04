@@ -30,18 +30,6 @@ public class UserController {
         return "user/login"; // templates/user/login.html 로 이동
     }
 
-    // 로그인 성공 후 페이지
-    @GetMapping("/login/success")
-    public String successPage(@RequestParam(name = "token", required = false) String token, Model model) {
-        if (token == null || token.isBlank()) {
-            return "redirect:/";
-        }
-
-        // model.addAttribute("accessToken", token);
-
-        return "user/login-success";
-    }
-
     // 로그인 처리 (JSON)
     @PostMapping("/user/login")
     @ResponseBody

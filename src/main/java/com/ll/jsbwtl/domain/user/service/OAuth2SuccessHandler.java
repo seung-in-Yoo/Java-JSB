@@ -2,6 +2,7 @@ package com.ll.jsbwtl.domain.user.service;
 
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // JWT 발급
         String accessToken = jwtTokenProvider.generateToken(localUserId, role);
 
-        response.sendRedirect("/login/success?token=" + accessToken);
+        // ✅ 쿠키 생성
+        Cookie cookie = new Cookie("Authorization", accessToken);
+        cookie.setHttpOnly(true);   // 자바스크립트 접근 불가 → 보안 강화
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60);  // 1시간 유효
+        response.addCookie(cookie);
+
+        // ✅ 토큰을 URL에 노출시키지 않고 리다이렉트
+        response.sendRedirect("/questions");
     }
 }
 
