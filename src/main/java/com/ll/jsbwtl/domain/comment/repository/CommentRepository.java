@@ -1,8 +1,11 @@
 package com.ll.jsbwtl.domain.comment.repository;
 
 import com.ll.jsbwtl.domain.comment.entity.Comment;
+import com.ll.jsbwtl.domain.answer.entity.Answer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-// 예시 코드입니다. (지우시고 자유롭게 개발하셔도 돼요)
+import java.util.List;
+
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    List<Comment> findByAnswerOrderByIdAsc(Answer answer);
 }
