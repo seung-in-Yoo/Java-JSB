@@ -2,6 +2,7 @@ package com.ll.jsbwtl.domain.user.controller;
 
 import com.ll.jsbwtl.config.jwt.JwtTokenProvider;
 import com.ll.jsbwtl.domain.user.dto.UserLoginRequest;
+import com.ll.jsbwtl.domain.user.dto.UserLoginResponse;
 import com.ll.jsbwtl.domain.user.dto.UserSignupRequest;
 import com.ll.jsbwtl.domain.user.dto.UserSignupResponse;
 import com.ll.jsbwtl.domain.user.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 
 @Controller
@@ -26,18 +28,6 @@ public class UserController {
     @GetMapping("/login")
     public String loginPage() {
         return "user/login"; // templates/user/login.html 로 이동
-    }
-
-    // 로그인 성공 후 페이지
-    @GetMapping("/login/success")
-    public String successPage(@RequestParam(name = "token", required = false) String token, Model model) {
-        if (token == null || token.isBlank()) {
-            return "redirect:/";
-        }
-
-        // model.addAttribute("accessToken", token);
-
-        return "user/login-success";
     }
 
     // 로그인 처리 (JSON)

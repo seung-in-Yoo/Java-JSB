@@ -30,7 +30,7 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private String provider;   
+    private String provider;
 
     private String providerId; // 소셜 고유ID
 
