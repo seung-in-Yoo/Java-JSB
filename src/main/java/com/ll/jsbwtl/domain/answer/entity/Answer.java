@@ -1,5 +1,6 @@
 package com.ll.jsbwtl.domain.answer.entity;
 
+import com.ll.jsbwtl.domain.comment.entity.Comment;
 import com.ll.jsbwtl.domain.question.entity.Question;
 import com.ll.jsbwtl.domain.user.entity.User;
 import com.ll.jsbwtl.global.jpa.entity.BaseEntity;
@@ -8,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +34,9 @@ public class Answer extends BaseEntity {
 
     @Transient
     private Author authorInfo;
+
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public Answer(Question question, String content, User author) {
         this.question = question;
